@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin iPad</title>
+<title>Admin Parc</title>
 
 <style>
 body{
@@ -18,28 +18,68 @@ body{
   height:100vh;
 }
 
-/* GAUCHE /
+/* GAUCHE = TEMPS */
 .left{
-  width:40%;
+  width:50%;
   background:#020617;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:20px;
+  gap:25px;
+}
+
+.temps{
+  font-size:75px;
+}
+
+input[type=range]{
+  width:75%;
+}
+
+/* bouton temps */
+.updateTemps{
+  padding:15px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#3b82f6;
+  color:white;
+}
+
+.status{
+  font-size:22px;
+  padding:10px 20px;
+  border-radius:10px;
+  background:#22c55e;
+}
+
+.status.closed{
+  background:#ef4444;
+}
+
+/* DROITE = PASSAGERS */
+.right{
+  width:50%;
+  background:#0b1220;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:25px;
 }
 
 .buttons{
   display:grid;
-  grid-template-columns:repeat(3,90px);
-  gap:15px;
+  grid-template-columns:repeat(3,110px);
+  gap:18px;
 }
 
 button{
-  font-size:24px;
-  padding:18px;
+  font-size:28px;
+  padding:22px;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   background:#1e293b;
   color:white;
 }
@@ -50,25 +90,20 @@ button:active{
 
 .valider{
   background:#22c55e;
+  font-size:22px;
+  padding:18px 30px;
+  border-radius:12px;
+}
+
+.closeBtn{
+  background:#ef4444;
   font-size:20px;
+  padding:12px 25px;
+  border-radius:10px;
 }
 
-/ DROITE */
-.right{
-  width:60%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-
-.temps{
-  font-size:70px;
-  margin-bottom:40px;
-}
-
-input[type=range]{
-  width:70%;
+h2{
+  font-size:28px;
 }
 </style>
 </head>
@@ -77,8 +112,32 @@ input[type=range]{
 
 <div class="container">
 
-  <!-- GAUCHE -->
+  <!-- GAUCHE = TEMPS -->
   <div class="left">
+
+    <div class="temps">
+      ⏳ <span id="temps">5</span> min
+    </div>
+
+    <input type="range" min="5" max="75" value="5" id="slider">
+
+    <button class="updateTemps" onclick="updateTemps()">
+      🔄 Mettre à jour le temps
+    </button>
+
+    <div id="status" class="status">
+      🟢 OUVERT
+    </div>
+
+    <button class="closeBtn" onclick="toggleClosed()">
+      🚫 Fermer / Ouvrir
+    </button>
+
+  </div>
+
+  <!-- DROITE = PASSAGERS -->
+  <div class="right">
+
     <h2>👥 Passagers: <span id="count">0</span></h2>
 
     <div class="buttons">
@@ -91,21 +150,15 @@ input[type=range]{
     </div>
 
     <button class="valider" onclick="valider()">✅ Valider</button>
-  </div>
 
-  <!-- DROITE -->
-  <div class="right">
-    <div class="temps">
-      ⏳ <span id="temps">5</span> min
-    </div>
-
-    <input type="range" min="5" max="75" value="5" id="slider">
   </div>
 
 </div>
 
 <script>
 let tempCount = 0;
+let totalPassengers = 0;
+let isClosed = false;
 
 // ajouter passagers
 function add(n){
@@ -119,17 +172,33 @@ slider.oninput = () => {
   document.getElementById("temps").innerText = slider.value;
 };
 
-// valider
+// mettre à jour temps (fixer valeur)
+function updateTemps(){
+  document.getElementById("temps").innerText = slider.value;
+}
+
+// valider = cumul
 function valider(){
-  const temps = slider.value;
+  totalPassengers += tempCount;
 
-  console.log("Passagers:", tempCount);
-  console.log("Temps:", temps);
-
-  alert("Envoyé !");
+  document.getElementById("count").innerText = totalPassengers;
 
   tempCount = 0;
-  document.getElementById("count").innerText = 0;
+}
+
+// fermer / ouvrir attraction
+function toggleClosed(){
+  isClosed = !isClosed;
+
+  const status = document.getElementById("status");
+
+  if(isClosed){
+    status.innerText = "🔴 FERMÉ";
+    status.classList.add("closed");
+  } else {
+    status.innerText = "🟢 OUVERT";
+    status.classList.remove("closed");
+  }
 }
 </script>
 
