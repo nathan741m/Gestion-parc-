@@ -1,3 +1,4 @@
+}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -18,7 +19,7 @@ body{
   height:100vh;
 }
 
-/* GAUCHE = TEMPS */
+/* GAUCHE = TEMPS /
 .left{
   width:50%;
   background:#020617;
@@ -37,7 +38,6 @@ input[type=range]{
   width:75%;
 }
 
-/* bouton temps */
 .updateTemps{
   padding:15px 25px;
   font-size:18px;
@@ -58,7 +58,7 @@ input[type=range]{
   background:#ef4444;
 }
 
-/* DROITE = PASSAGERS */
+/ DROITE = PASSAGERS */
 .right{
   width:50%;
   background:#0b1220;
@@ -112,7 +112,7 @@ h2{
 
 <div class="container">
 
-  <!-- GAUCHE = TEMPS -->
+  <!-- GAUCHE -->
   <div class="left">
 
     <div class="temps">
@@ -135,7 +135,7 @@ h2{
 
   </div>
 
-  <!-- DROITE = PASSAGERS -->
+  <!-- DROITE -->
   <div class="right">
 
     <h2>👥 Passagers: <span id="count">0</span></h2>
@@ -155,39 +155,61 @@ h2{
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+// 🔥 CONFIG FIREBASE (REMPLACE PAR TES INFOS)
+const firebaseConfig = {
+  apiKey: "TON_API_KEY",
+  authDomain: "TON_AUTH_DOMAIN",
+  databaseURL: "TON_DATABASE_URL",
+  projectId: "TON_PROJECT_ID",
+  storageBucket: "TON_BUCKET",
+  messagingSenderId: "TON_SENDER",
+  appId: "TON_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 let tempCount = 0;
 let totalPassengers = 0;
 let isClosed = false;
 
 // ajouter passagers
-function add(n){
+window.add = (n) => {
   tempCount += n;
   document.getElementById("count").innerText = tempCount;
-}
+};
 
-// slider temps
+// slider
 const slider = document.getElementById("slider");
 slider.oninput = () => {
   document.getElementById("temps").innerText = slider.value;
 };
 
-// mettre à jour temps (fixer valeur)
-function updateTemps(){
+// update temps
+window.updateTemps = () => {
   document.getElementById("temps").innerText = slider.value;
-}
+};
 
-// valider = cumul
-function valider(){
+// valider = envoyer à Firebase
+window.valider = () => {
   totalPassengers += tempCount;
 
+  set(ref(db, "attraction1"), {
+    temps: slider.value,
+    passagers: totalPassengers,
+    closed: isClosed
+  });
+
   document.getElementById("count").innerText = totalPassengers;
-
   tempCount = 0;
-}
+};
 
-// fermer / ouvrir attraction
-function toggleClosed(){
+// fermer / ouvrir
+window.toggleClosed = () => {
   isClosed = !isClosed;
 
   const status = document.getElementById("status");
@@ -199,8 +221,8 @@ function toggleClosed(){
     status.innerText = "🟢 OUVERT";
     status.classList.remove("closed");
   }
-}
+};
 </script>
 
 </body>
-</html>
+</html
